@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>MODERN ARCHIVE | Global Store</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;500;700&family=Outfit:wght@300;400;600&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+
+    <style>
+        :root {
+            --primary: #000000;
+            --accent: #2563eb; /* Azul Eléctrico Moderno */
+            --bg: #ffffff;
+            --surface: #f8f8f8;
+            --text: #111111;
+            --radius: 12px;
+            --shadow: 0 10px 30px rgba(0,0,0,0.08);
+        }
+
+        * { margin: 0; padding: 0; box-sizing: border-box; }
+        body { font-family: 'Outfit', sans-serif; background: var(--bg); color: var(--text); overflow-x: hidden; scroll-behavior: smooth; }
+
+        /* --- UI POLISH: HEADER --- */
+        nav {
+            background: rgba(255,255,255,0.8); backdrop-filter: blur(20px);
+            padding: 15px 6%; display: flex; justify-content: space-between; align-items: center;
+            position: sticky; top: 0; z-index: 1000; border-bottom: 1px solid rgba(0,0,0,0.05);
+        }
+        .logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.5rem; letter-spacing: -1px; }
+        .nav-links { display: flex; gap: 30px; }
+        .nav-links a { text-decoration: none; color: var(--text); font-weight: 500; font-size: 0.9rem; transition: 0.3s; }
+        .nav-links a:hover { color: var(--accent); }
+
+        /* --- HERO: HIGH IMPACT --- */
+        .hero {
+            height: 80vh; margin: 20px; border-radius: 30px;
+            background: linear-gradient(rgba(0,0,0,0.4), rgba(0,0,0,0.4)), url('https://images.unsplash.com/photo-1558769132-cb1aea458c5e?q=80&w=2070');
+            background-size: cover; background-position: center;
+            display: flex; flex-direction: column; justify-content: center; align-items: center; color: white;
+        }
+        .hero h1 { font-size: clamp(2.5rem, 8vw, 5rem); font-family: 'Space Grotesk'; font-weight: 700; text-align: center; }
+
+        /* --- SHOP: DINÁMICO --- */
+        .container { max-width: 1400px; margin: 80px auto; padding: 0 6%; }
+        .filter-bar { display: flex; justify-content: center; gap: 15px; margin-bottom: 50px; }
+        .f-btn { padding: 10px 25px; border: none; border-radius: 50px; cursor: pointer; background: var(--surface); font-weight: 600; transition: 0.3s; }
+        .f-btn.active { background: var(--primary); color: white; }
+
+        .grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 40px; }
+        .product-card { background: white; border-radius: var(--radius); overflow: hidden; position: relative; transition: 0.4s; }
+        .product-card:hover { transform: translateY(-10px); }
+        .p-img-box { position: relative; overflow: hidden; border-radius: var(--radius); }
+        .p-img-box img { width: 100%; height: 400px; object-fit: cover; transition: 0.6s; }
+        .product-card:hover img { transform: scale(1.05); }
+
+        /* --- COMPONENTES: SELECTOR DE TALLAS --- */
+        .size-selector { display: flex; gap: 8px; margin: 15px 0; }
+        .size-opt { width: 35px; height: 35px; border: 1px solid #ddd; display: flex; align-items: center; justify-content: center; font-size: 0.8rem; cursor: pointer; border-radius: 5px; transition: 0.3s; }
+        .size-opt.selected { background: var(--primary); color: white; border-color: var(--primary); }
+
+        .btn-add { width: 100%; padding: 15px; background: var(--primary); color: white; border: none; border-radius: var(--radius); font-weight: 700; cursor: pointer; display: flex; justify-content: center; align-items: center; gap: 10px; }
+
+        /* --- CARRITO PREMIUM --- */
+        .cart-overlay { position: fixed; inset: 0; background: rgba(0,0,0,0.5); opacity: 0; visibility: hidden; z-index: 1500; transition: 0.3s; }
+        .cart-overlay.active { opacity: 1; visibility: visible; }
+        .cart-sidebar { position: fixed; right: -450px; top: 0; width: 420px; height: 100%; background: white; z-index: 2000; padding: 40px; transition: 0.5s cubic-bezier(0.4, 0, 0.2, 1); display: flex; flex-direction: column; }
+        .cart-sidebar.active { right: 0; }
+        .cart-item { display: flex; gap: 15px; margin-bottom: 20px; padding-bottom: 15px; border-bottom: 1px solid #eee; }
+
+        /* --- NOTIFICACIONES (TOASTS) --- */
+        #toast { position: fixed; bottom: 30px; left: 50%; transform: translateX(-50%); background: var(--primary); color: white; padding: 12px 30px; border-radius: 50px; font-weight: 600; display: none; z-index: 3000; box-shadow: var(--shadow); }
+
+        /* --- FOOTER ESTRATÉGICO --- */
+        footer { background: var(--surface); padding: 80px 6% 40px; border-radius: 50px 50px 0 0; }
+        .footer-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 40px; }
+        .legal-notice { font-size: 0.8rem; color: #666; line-height: 1.6; border-top: 1px solid #ddd; margin-top: 40px; padding-top: 20px; text-align: center; }
+
+        @media (max-width: 500px) { .cart-sidebar { width: 100%; } }
+    </style>
+</head>
+<body>
+
+    <nav>
+        <div class="logo">MODERN<span>ARCHIVE</span></div>
+        <div class="nav-links">
+            <a href="#shop">New In</a>
+            <a href="#shop">Essentials</a>
+            <a href="#shop">Tijuana Express</a>
+        </div>
+        <div style="cursor:pointer; position:relative" onclick="toggleCart()">
+            <i class="fa-solid fa-cart-shopping"></i>
+            <span id="badge" style="position:absolute; top:-10px; right:-10px; background:var(--accent); color:white; font-size:0.6rem; padding:3px 6px; border-radius:50%;">0</span>
+        </div>
+    </nav>
+
+    <header class="hero">
+        <h1 class="animate__animated animate__fadeIn">DROP 2026:<br>URBAN PERFORMANCE</h1>
+        <button class="f-btn active" style="margin-top:25px; padding:15px 40px;" onclick="document.getElementById('shop').scrollIntoView()">Shop Selection</button>
+    </header>
+
+    <div class="container" id="shop">
+        <div class="filter-bar">
+            <button class="f-btn active">All</button>
+            <button class="f-btn">Premium</button>
+            <button class="f-btn">Active</button>
+        </div>
+
+        <div class="grid" id="product-container">
+            </div>
+    </div>
+
+    <div class="cart-overlay" onclick="toggleCart()"></div>
+    <div class="cart-sidebar" id="sidebar">
+        <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:40px;">
+            <h2 style="font-family:'Space Grotesk'">Your Cart</h2>
+            <i class="fa-solid fa-xmark" onclick="toggleCart()" style="cursor:pointer; font-size:1.5rem;"></i>
+        </div>
+        <div id="cart-list" style="flex-grow:1; overflow-y:auto;"></div>
+        <div style="margin-top:20px; border-top:2px solid var(--surface); padding-top:20px;">
+            <div style="display:flex; justify-content:space-between; font-size:1.4rem; font-weight:700; margin-bottom:20px;">
+                <span>Total</span>
+                <span id="total-val">$0 MXN</span>
+            </div>
+            <button class="btn-add" style="background:var(--accent)" onclick="checkout()">Checkout Now</button>
+        </div>
+    </div>
+
+    <div id="toast">¡Añadido al carrito!</div>
+
+    <a href="https://wa.me/526640000000" style="position:fixed; bottom:30px; right:30px; background:#25d366; color:white; width:60px; height:60px; border-radius:50%; display:flex; justify-content:center; align-items:center; font-size:1.5rem; text-decoration:none; z-index:1000; box-shadow:var(--shadow);"><i class="fa-brands fa-whatsapp"></i></a>
+
+    <footer>
+        <div class="footer-grid">
+            <div>
+                <h4 style="margin-bottom:20px;">About Store</h4>
+                <p>Curating the best performance apparel for the modern lifestyle. Based in Tijuana, B.C.</p>
+            </div>
+            <div>
+                <h4 style="margin-bottom:20px;">Help</h4>
+                <p>Local Shipping (24h)<br>Size Guide<br>Returns</p>
+            </div>
+            <div>
+                <h4 style="margin-bottom:20px;">Secure Payments</h4>
+                <div style="font-size:1.5rem; display:flex; gap:15px; color:#888;">
+                    <i class="fa-brands fa-cc-visa"></i>
+                    <i class="fa-brands fa-cc-mastercard"></i>
+                    <i class="fa-brands fa-cc-paypal"></i>
+                </div>
+            </div>
+        </div>
+        <div class="legal-notice">
+            Este sitio cumple con la Ley Federal de Protección al Consumidor (PROFECO) y la Ley de Datos Personales en Posesión de Particulares. <br>
+            &copy; 2026 MODERN ARCHIVE STORE. All Rights Reserved.
+        </div>
+    </footer>
+
+    <script>
+        // DATA
+        const products = [
+            {id: 1, name: "Technical Overshirt", price: 1250, img: "https://images.unsplash.com/photo-1594932224011-041d83b1db55?q=80&w=500"},
+            {id: 2, name: "Performance Jogger", price: 890, img: "https://images.unsplash.com/photo-1580487212151-610ba2780d6b?q=80&w=500"},
+            {id: 3, name: "Core Compression Tee", price: 450, img: "https://images.unsplash.com/photo-1581655353564-df123a1eb820?q=80&w=500"}
+        ];
+
+        let cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+        function renderProducts() {
+            const container = document.getElementById('product-container');
+            container.innerHTML = products.map(p => `
+                <div class="product-card">
+                    <div class="p-img-box">
+                        <img src="${p.img}" alt="${p.name}">
+                    </div>
+                    <div style="padding:20px;">
+                        <h3>${p.name}</h3>
+                        <div class="size-selector">
+                            <div class="size-opt" onclick="selectSize(this)">S</div>
+                            <div class="size-opt" onclick="selectSize(this)">M</div>
+                            <div class="size-opt" onclick="selectSize(this)">L</div>
+                        </div>
+                        <p style="font-weight:700; color:var(--accent); font-size:1.2rem; margin-bottom:15px;">$${p.price} MXN</p>
+                        <button class="btn-add" onclick="addToCart(${p.id})"><i class="fa-solid fa-plus"></i> Add to Cart</button>
+                    </div>
+                </div>
+            `).join('');
+            updateUI();
+        }
+
+        function selectSize(el) {
+            el.parentElement.querySelectorAll('.size-opt').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+
+        function toggleCart() {
+            document.getElementById('sidebar').classList.toggle('active');
+            document.querySelector('.cart-overlay').classList.toggle('active');
+        }
+
+        function addToCart(id) {
+            const p = products.find(x => x.id === id);
+            cart.push(p);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateUI();
+            showToast();
+        }
+
+        function showToast() {
+            const t = document.getElementById('toast');
+            t.style.display = 'block';
+            setTimeout(() => t.style.display = 'none', 2000);
+        }
+
+        function updateUI() {
+            document.getElementById('badge').innerText = cart.length;
+            const list = document.getElementById('cart-list');
+            list.innerHTML = cart.length === 0 ? '<p style="color:#888;">Empty bag</p>' : '';
+            
+            let total = 0;
+            cart.forEach((item, i) => {
+                total += item.price;
+                list.innerHTML += `
+                    <div class="cart-item">
+                        <img src="${item.img}" style="width:70px; height:80px; object-fit:cover; border-radius:8px;">
+                        <div style="flex-grow:1">
+                            <h4 style="font-size:0.9rem;">${item.name}</h4>
+                            <p style="font-weight:700;">$${item.price}</p>
+                        </div>
+                        <i class="fa-solid fa-trash" onclick="remove(${i})" style="color:#ff4444; cursor:pointer;"></i>
+                    </div>`;
+            });
+            document.getElementById('total-val').innerText = `$${total} MXN`;
+        }
+
+        function remove(i) {
+            cart.splice(i, 1);
+            localStorage.setItem('cart', JSON.stringify(cart));
+            updateUI();
+        }
+
+        function checkout() {
+            if(cart.length === 0) return alert("Your cart is empty");
+            alert("Redirecting to secure gateway... Total: " + document.getElementById('total-val').innerText);
+        }
+
+        renderProducts();
+    </script>
+</body>
+</html>
